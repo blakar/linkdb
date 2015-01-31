@@ -129,15 +129,19 @@
 
                 case ".tags":
                     var tags = commandArg.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    this.currentLinkInfo.Tags = tags;
+                    foreach (var tag in tags)
+                    {
+                        this.currentLinkInfo.Tags.Add(tag);
+                    }
                     break;
 
                 case ".quote":
-                    if (this.currentLinkInfo.Quotes == null)
-                    {
-                        this.currentLinkInfo.Quotes = new List<string>();
-                    }
                     this.currentLinkInfo.Quotes.Add(commandArg);
+                    break;
+
+                case ".reddit":
+                case ".related":
+                    this.currentLinkInfo.Related.Add(commandArg);
                     break;
 
                 case ".read-request":
@@ -221,8 +225,16 @@
         public string Title { get; set; }
         public DateTime? Added { get; set; }
         public DateTime? Published { get; set; }
-        public string[] Tags { get; set; }
+        public List<string> Tags { get; set; }
         public List<string> Quotes { get; set; }
         public bool ReadRequest { get; set; }
+        public List<string> Related { get; set; }
+
+        public LinkInfo()
+        {
+            this.Quotes = new List<string>();
+            this.Related = new List<string>();
+            this.Tags = new List<string>();
+        }
     }
 }
