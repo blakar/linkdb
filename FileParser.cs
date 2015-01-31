@@ -45,6 +45,23 @@
                 do
                 {
                     line = sr.ReadLine();
+                    if (line != null && line.TrimEnd().EndsWith(" \\") && !line.TrimStart().StartsWith("%%"))
+                    {
+                        // continuation character, we need to read next line as well
+                        bool continueReading = true;
+                        line = line.Substring(0, line.Length - 1); // remove marker
+                        while (continueReading)
+                        {
+                            var nextLine = sr.ReadLine();
+                            continueReading = nextLine == null || nextLine.TrimEnd().EndsWith(" \\");
+                            if (nextLine != null)
+                            {
+                                nextLine = nextLine.Substring(0, nextLine.Length - 1);
+                                line += nextLine;
+                            }
+                        }
+                    }
+
                     this.ProcessFileLine(line);
                 }
                 while (line != null);
@@ -111,6 +128,9 @@
                 case ".tags":
                     var tags = commandArg.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     this.currentLinkInfo.Tags = tags;
+                    break;
+
+                case ".quote":
                     break;
 
                 default:
