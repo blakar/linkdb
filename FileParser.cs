@@ -131,7 +131,13 @@
                     break;
 
                 case ".quote":
+                    if (this.currentLinkInfo.Quotes == null)
+                    {
+                        this.currentLinkInfo.Quotes = new List<string>();
+                    }
+                    this.currentLinkInfo.Quotes.Add(commandArg);
                     break;
+
 
                 default:
                     this.WriteError("Unknown command type: " + commandType);
@@ -196,5 +202,6 @@
         public string Title { get; set; }
         public DateTime? Added { get; set; }
         public string[] Tags { get; set; }
+        public List<string> Quotes { get; set; }
     }
 }
