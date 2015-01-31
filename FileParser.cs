@@ -138,6 +138,9 @@
                     this.currentLinkInfo.Quotes.Add(commandArg);
                     break;
 
+                case ".read-request":
+                    this.currentLinkInfo.ReadRequest = true;
+                    break;
 
                 default:
                     this.WriteError("Unknown command type: " + commandType);
@@ -203,5 +206,6 @@
         public DateTime? Added { get; set; }
         public string[] Tags { get; set; }
         public List<string> Quotes { get; set; }
+        public bool ReadRequest { get; set; }
     }
 }
