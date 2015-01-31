@@ -74,10 +74,18 @@
             switch (commandType.ToLowerInvariant())
             {
                 case ".tag":
+                    if (this.tags.Contains(commandArg))
+                    {
+                        this.WriteError("Duplicate tag: " + commandArg);
+                    }
                     this.tags.Add(commandArg);
                     break;
 
                 case ".link":
+                    if (this.tags.Contains(commandArg))
+                    {
+                        this.WriteError("Duplicate link: " + commandArg);
+                    }
                     this.links.Add(commandArg);
                     break;
             }
@@ -97,6 +105,13 @@
             {
                 return new Tuple<string, string>(line.Trim(), null);
             }
+        }
+
+        private void WriteError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("ERROR: " + message);
+            Console.ResetColor();
         }
     }
 
