@@ -110,14 +110,16 @@
                     break;
 
                 case ".added":
-                    var date = ConvertCompactDateStringToDateTime(commandArg);
-                    if (date != DateTime.MinValue)
                     {
-                        this.currentLinkInfo.Added = date;
-                    }
-                    else
-                    {
-                        this.WriteError("Added command contained invalid date: " + commandArg);
+                        var date = ConvertCompactDateStringToDateTime(commandArg);
+                        if (date != DateTime.MinValue)
+                        {
+                            this.currentLinkInfo.Added = date;
+                        }
+                        else
+                        {
+                            this.WriteError("Added command contained invalid date: " + commandArg);
+                        }
                     }
                     break;
 
@@ -140,6 +142,20 @@
 
                 case ".read-request":
                     this.currentLinkInfo.ReadRequest = true;
+                    break;
+
+                case ".published":
+                    {
+                        var date = ConvertCompactDateStringToDateTime(commandArg);
+                        if (date != DateTime.MinValue)
+                        {
+                            this.currentLinkInfo.Published = date;
+                        }
+                        else
+                        {
+                            this.WriteError("Published command contained invalid date: " + commandArg);
+                        }
+                    }
                     break;
 
                 default:
@@ -204,6 +220,7 @@
         public string Link { get; set; }
         public string Title { get; set; }
         public DateTime? Added { get; set; }
+        public DateTime? Published { get; set; }
         public string[] Tags { get; set; }
         public List<string> Quotes { get; set; }
         public bool ReadRequest { get; set; }
