@@ -104,6 +104,15 @@
                     }
                     break;
 
+                case ".title":
+                    this.currentLinkInfo.Title = commandArg;
+                    break;
+
+                case ".tags":
+                    var tags = commandArg.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    this.currentLinkInfo.Tags = tags;
+                    break;
+
                 default:
                     this.WriteError("Unknown command type: " + commandType);
                     break;
@@ -165,6 +174,7 @@
     {
         public string Link { get; set; }
         public string Title { get; set; }
-        public DateTime? Added { get; set; } 
+        public DateTime? Added { get; set; }
+        public string[] Tags { get; set; }
     }
 }
