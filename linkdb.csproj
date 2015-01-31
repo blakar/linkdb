@@ -8,8 +8,8 @@
     <ProjectGuid>{DBFDB7AF-70A4-4C32-8A71-9F2236EE03FA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>linkdb</RootNamespace>
-    <AssemblyName>Blakar.Tools.LinkDb</AssemblyName>
+    <RootNamespace>Blakar.Tools.LinkDb</RootNamespace>
+    <AssemblyName>linkdb</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
