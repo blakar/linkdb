@@ -13,6 +13,10 @@
         private LinkInfo currentLinkInfo;
         private List<LinkInfo> linkDetails;
 
+        public event EventHandler<DuplicateTagEventArgs> OnDuplicateTagEvent;
+        public event EventHandler<DuplicateLinkEventArgs> OnDuplicateLinkEvent;
+        public event EventHandler<GenericMessageEventArgs> OnGenericMessageEvent;
+
         public FileParser(string fileName)
         {
             this.fileName = fileName;
@@ -94,7 +98,10 @@
                 case ".tag":
                     if (this.tags.Contains(commandArg))
                     {
-                        this.WriteError("Duplicate tag: " + commandArg);
+                        if (OnDuplicateTagEvent != null)
+                        {
+                            OnDuplicateTagEvent(this, new DuplicateTagEventArgs(commandArg));
+                        }
                     }
                     this.tags.Add(commandArg);
                     break;
@@ -102,7 +109,10 @@
                 case ".link":
                     if (this.tags.Contains(commandArg))
                     {
-                        this.WriteError("Duplicate link: " + commandArg);
+                        if (this.OnDuplicateLinkEvent != null)
+                        {
+                            this.OnDuplicateLinkEvent(this, new DuplicateLinkEventArgs(commandArg));
+                        }
                     }
                     this.links.Add(commandArg);
                     this.currentLinkInfo = new LinkInfo { Link = commandArg };
@@ -118,7 +128,11 @@
                         }
                         else
                         {
-                            this.WriteError("Added command contained invalid date: " + commandArg);
+                            if (this.OnGenericMessageEvent != null)
+                            {
+                                this.OnGenericMessageEvent(this, 
+                                    new GenericMessageEventArgs("Added command contains invalid date: " + commandArg));
+                            }
                         }
                     }
                     break;
@@ -157,13 +171,20 @@
                         }
                         else
                         {
-                            this.WriteError("Published command contained invalid date: " + commandArg);
+                            if (this.OnGenericMessageEvent != null)
+                            {
+                                this.OnGenericMessageEvent(this, 
+                                    new GenericMessageEventArgs("Published command contains invalid date: " + commandArg));
+                            }
                         }
                     }
                     break;
 
                 default:
-                    this.WriteError("Unknown command type: " + commandType);
+                    if (this.OnGenericMessageEvent != null)
+                    {
+                        this.OnGenericMessageEvent(this, new GenericMessageEventArgs("Unknown command type: " + commandType));
+                    }
                     break;
             }
         }
@@ -209,13 +230,6 @@
         {
             int result;
             return int.TryParse(text, out result) ? result : defaultValue;
-        }
-
-        private void WriteError(string message)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("ERROR: " + message);
-            Console.ResetColor();
         }
     }
 
