@@ -64,6 +64,24 @@
             var epochTime = GetEpochTime(args.Date.Value);
 
             Console.WriteLine("Epoch time for {0} is {1}", args.Date.Value.ToString("yyyy-MM-dd"), epochTime);
+
+            if (args.GenerateRedditLink != null)
+            {
+                if (args.Period == 0)
+                {
+                    args.Period = 1;
+                }
+
+                string redditTemplate = "http://www.reddit.com/r/{0}/search?q=(and+timestamp:{1}..{2}+title:'')&sort=top&restrict_sr=on&syntax=cloudsearch";
+                string redditLink = string.Format(
+                    redditTemplate,
+                    args.GenerateRedditLink,
+                    GetEpochTime(args.Date.Value),
+                    GetEpochTime(args.Date.Value + new TimeSpan(args.Period, 0, 0, 0)));
+                Console.WriteLine(redditLink);
+            }
+            
+            
         }
 
         void OnGenericMessageEvent(object sender, GenericMessageEventArgs e)
@@ -144,5 +162,11 @@
     {
         [ArgShortcut("-d"), ArgPosition(1)]
         public DateTime? Date { get; set; }
+
+        [ArgShortcut("-r")]
+        public string GenerateRedditLink { get; set; } // name of subreddit
+
+        [ArgShortcut("-p")]
+        public int Period { get; set; }
     }
 }
