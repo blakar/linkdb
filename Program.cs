@@ -49,11 +49,26 @@
             parser.OnGenericMessageEvent += new EventHandler<GenericMessageEventArgs>(OnGenericMessageEvent);
             parser.Parse();
             Console.WriteLine("Counts: Tags={0}; Links={1}", parser.TagCount, parser.LinkCount);
+
+            parser.CheckConsistency();
+        }
+
+        [ArgActionMethod, ArgDescription("Calculate dates with respect to Unix epoch")]
+        public void Epoch(EpochArguments args)
+        {
+            if (args.Date == null)
+            {
+                args.Date = DateTime.Today;
+            }
+
+            var epochTime = GetEpochTime(args.Date.Value);
+
+            Console.WriteLine("Epoch time for {0} is {1}", args.Date.Value.ToString("yyyy-MM-dd"), epochTime);
         }
 
         void OnGenericMessageEvent(object sender, GenericMessageEventArgs e)
         {
-            this.WriteError(e.Message);
+            this.Write(e.Message, e.Severity);
         }
 
         private void OnDuplicateLinkEvent(object sender, DuplicateLinkEventArgs e)
@@ -68,9 +83,38 @@
 
         private void WriteError(string message)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("ERROR: " + message);
+            Write(message, Severity.Error);
+        }
+
+        private void Write(string message, Severity severity)
+        {
+            string prefix = "";
+
+            switch (severity)
+            {
+                case Severity.Information:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    prefix = "INFO: ";
+                    break;
+                case Severity.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    prefix = "WARN: ";
+                    break;
+                case Severity.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    prefix = "ERROR: ";
+                    break;
+            }
+
+            Console.WriteLine(prefix + message);
             Console.ResetColor();
+        }
+
+        private int GetEpochTime(DateTime dateTime)
+        {
+            TimeSpan t = dateTime - new DateTime(1970, 1, 1);
+            int secondsSinceEpoch = (int)t.TotalSeconds;
+            return secondsSinceEpoch;
         }
     }
 
@@ -94,5 +138,11 @@
         [ArgShortcut("-dl"), ArgDescription("Check duplicate links")]
         public bool CheckDuplicateLinks { get; set; }
 
+    }
+
+    internal class EpochArguments
+    {
+        [ArgShortcut("-d"), ArgPosition(1)]
+        public DateTime? Date { get; set; }
     }
 }

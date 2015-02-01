@@ -72,6 +72,34 @@
             }
         }
 
+        public void CheckConsistency()
+        {
+            foreach (var linkDetail in this.linkDetails)
+            {
+                WriteMessage("Checking link " + linkDetail.Link, Severity.Information);
+
+                if (string.IsNullOrWhiteSpace(linkDetail.Title))
+                {
+                    WriteMessage("Missing title for link " + linkDetail.Link);
+                }
+
+                if (linkDetail.Added == DateTime.MinValue)
+                {
+                    WriteMessage("Missing added date time for link " + linkDetail.Link);
+                }
+
+                if (linkDetail.Tags.Count == 0)
+                {
+                    WriteMessage("Missing tags for link " + linkDetail.Link);
+                }
+
+                if (!linkDetail.Tags.Contains("done"))
+                {
+                    WriteMessage("Missing done flag for link " + linkDetail.Link);
+                }
+            }
+        }
+
         private void ProcessFileLine(string line)
         {
             if (line != null)
@@ -183,7 +211,8 @@
                 default:
                     if (this.OnGenericMessageEvent != null)
                     {
-                        this.OnGenericMessageEvent(this, new GenericMessageEventArgs("Unknown command type: " + commandType));
+                        this.OnGenericMessageEvent(this, new 
+                            GenericMessageEventArgs("Unknown command type: " + commandType, Severity.Error));
                     }
                     break;
             }
@@ -230,6 +259,14 @@
         {
             int result;
             return int.TryParse(text, out result) ? result : defaultValue;
+        }
+
+        private void WriteMessage(string message, Severity severity = Severity.Error)
+        {
+            if (this.OnGenericMessageEvent != null)
+            {
+                this.OnGenericMessageEvent(this, new GenericMessageEventArgs(message, severity));
+            }
         }
     }
 
